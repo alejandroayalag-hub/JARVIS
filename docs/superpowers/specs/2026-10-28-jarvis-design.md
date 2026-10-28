@@ -155,8 +155,12 @@ Fotos guardadas por pago y periodo en alex-llm. Resumen solo bajo pedido
   `qwen3:14b` (ya cargado para Lexium) en vez de otro modelo.
 - Modelo de visión para comprobantes: el builder elige uno local que quepa
   (ej. familia Qwen-VL).
-- Especificaciones de alex-llm (GPU/VRAM/RAM): **por confirmar**; la plática
-  previa asumía la PC gpu (RTX 5070 12 GB), que ya murió.
+- alex-llm: mini PC, 32 GB RAM, disco 512 GB, GPU externa **ASUS Prime RTX 5070
+  (12 GB VRAM)** en dock universal por **OCuLink**. Misma GPU que asumía la
+  plática previa → el presupuesto de VRAM de ahí sigue aplicando.
+- Disco de 512 GB compartido con el corpus de Lexium (Open WebUI/Chroma) y
+  RATIUM: vigilar espacio; las fotos de comprobantes ocupan poco (comprimir a
+  ~300 KB c/u).
 
 ## 9. Casa inteligente (fases posteriores, resumen)
 
@@ -179,7 +183,7 @@ Decisiones tomadas hoy:
 ## 10. Pendientes que no bloquean la fase 1
 
 - API key de Anthropic (para consultas a Claude con permiso).
-- Especificaciones de alex-llm y VRAM libre.
+- VRAM libre con Lexium cargado (medir con `nvidia-smi`).
 - Fotos de las cajas de los sensores.
 - Compra del Home Assistant Green (fase 2).
 - Calendario "Casa" en Google (se crea al implementar).
