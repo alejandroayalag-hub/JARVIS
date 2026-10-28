@@ -18,3 +18,11 @@ test('no pasa del tope de alarmas de Android y conserva los más próximos', () 
   assert.equal(out.length, MAX_AVISOS);
   assert.equal(out[0].date.toISOString(), '2027-01-01T00:00:00.000Z');
 });
+
+import { debeBloquear } from '../src/avisos.js';
+
+test('no bloquea al volver de la cámara; sí tras 2 minutos fuera', () => {
+  assert.equal(debeBloquear(0, 30_000), false);
+  assert.equal(debeBloquear(0, 2 * 60_000 + 1), true);
+  assert.equal(debeBloquear(null, 5_000), false);
+});

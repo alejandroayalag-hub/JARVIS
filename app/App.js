@@ -7,6 +7,7 @@ import * as Notifications from 'expo-notifications';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { cargarSesion, salir } from './src/api';
 import { prepararAvisos, syncReminders } from './src/notificaciones';
+import { debeBloquear } from './src/avisos';
 import Login from './src/screens/Login';
 import Pagos from './src/screens/Pagos';
 import Pago from './src/screens/Pago';
@@ -21,6 +22,7 @@ export default function App() {
   const [user, setUser] = useState(undefined); // undefined = cargando
   const [bloqueado, setBloqueado] = useState(true);
   const estado = useRef(AppState.currentState);
+  const salio = useRef(null);
 
   async function desbloquear() {
     const hay = await LocalAuthentication.hasHardwareAsync() && await LocalAuthentication.isEnrolledAsync();
@@ -32,7 +34,11 @@ export default function App() {
   useEffect(() => {
     cargarSesion().then((ses) => { setUser(ses?.user ?? null); if (ses) desbloquear(); });
     const sub = AppState.addEventListener('change', (st) => {
-      if (estado.current.match(/background/) && st === 'active') { setBloqueado(true); desbloquear(); syncReminders().catch(() => {}); }
+      if (st === 'background') salio.current = Date.now();
+      if (estado.current.match(/background/) && st === 'active') {
+        if (debeBloquear(salio.current, Date.now())) { setBloqueado(true); desbloquear(); }
+        syncReminders().catch(() => {});
+      }
       estado.current = st;
     });
     const toque = Notifications.addNotificationResponseReceivedListener((r) => {
@@ -46,13 +52,8 @@ export default function App() {
 
   if (user === undefined) return <View style={s.pantalla} />;
   if (!user) return <Login onEntrar={(u) => { setUser(u); setBloqueado(false); }} />;
-  if (bloqueado) return (
-    <View style={[s.pantalla, s.pad, { justifyContent: 'center' }]}>
-      <TouchableOpacity style={s.boton} onPress={desbloquear}><Text style={s.botonTexto}>Desbloquear</Text></TouchableOpacity>
-    </View>
-  );
-
   return (
+    <View style={{ flex: 1 }}>
     <NavigationContainer ref={nav} theme={tema}>
       <StatusBar style="light" />
       <Stack.Navigator screenOptions={{ headerTintColor: c.oro }}>
@@ -64,5 +65,12 @@ export default function App() {
         <Stack.Screen name="Chat" component={Chat} options={{ title: 'JARVIS' }} />
       </Stack.Navigator>
     </NavigationContainer>
+    {bloqueado && (
+      // Encima de la navegación, sin desmontarla: no se pierde lo que estaba a medias.
+      <View style={[s.pantalla, s.pad, { position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, justifyContent: 'center' }]}>
+        <TouchableOpacity style={s.boton} onPress={desbloquear}><Text style={s.botonTexto}>Desbloquear</Text></TouchableOpacity>
+      </View>
+    )}
+    </View>
   );
 }
