@@ -1,0 +1,9 @@
+[Unit]
+Description=Respaldo diario de JARVIS al NAS
+
+[Service]
+Type=oneshot
+User=jarvis
+Environment=JARVIS_DATA=/srv/jarvis/data
+EnvironmentFile=/srv/jarvis/backup.env
+ExecStart=/srv/jarvis/backend/deploy/backup.sh

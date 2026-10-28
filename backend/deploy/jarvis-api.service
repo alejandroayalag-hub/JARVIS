@@ -1,0 +1,18 @@
+[Unit]
+Description=JARVIS API (pagos y agenda de Alex y Tere)
+After=network-online.target ollama.service
+Wants=network-online.target
+
+[Service]
+User=jarvis
+WorkingDirectory=/srv/jarvis/backend
+Environment=TZ=America/Mexico_City
+Environment=JARVIS_DATA=/srv/jarvis/data
+Environment=PORT=3019
+Environment=NODE_OPTIONS=--no-warnings=ExperimentalWarning
+ExecStart=/usr/bin/node src/server.js
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
