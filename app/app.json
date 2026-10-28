@@ -1,34 +1,43 @@
 {
   "expo": {
-    "name": "app",
-    "slug": "app",
+    "name": "JARVIS",
+    "slug": "jarvis-casa",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "ios": {
-      "supportsTablet": true
+      "backgroundColor": "#0E1522"
     },
     "android": {
+      "package": "mx.alexpho.jarvis",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#0E1522"
       },
-      "edgeToEdgeEnabled": true
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
+      "edgeToEdgeEnabled": true,
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.SCHEDULE_EXACT_ALARM",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.VIBRATE"
+      ]
     },
     "plugins": [
       "expo-background-task",
       "expo-secure-store",
-      "expo-build-properties"
-    ]
+      ["expo-notifications", { "color": "#C9A45C" }],
+      ["expo-image-picker", { "cameraPermission": "JARVIS usa la cámara para la foto del comprobante de pago." }],
+      ["expo-local-authentication", { "faceIDPermission": "JARVIS usa la huella para abrir la app." }],
+      ["expo-build-properties", { "android": { "usesCleartextTraffic": true } }]
+    ],
+    "extra": {
+      "apiUrl": "http://100.86.154.99:3019"
+    }
   }
 }
