@@ -162,6 +162,13 @@ Fotos guardadas por pago y periodo en alex-llm. Resumen solo bajo pedido
   RATIUM: vigilar espacio; las fotos de comprobantes ocupan poco (comprimir a
   ~300 KB c/u).
 
+### 8.2 Respaldos
+- Diario (madrugada) de la base SQLite y las fotos al **NAS que está junto a
+  alex-llm en la casa** (decisión de Alex). Guardar 30 días de respaldos.
+- Queda todo en casa: un incendio o robo se lleva máquina y NAS juntos. Si algún
+  día se quiere copia fuera de casa, agregarla cifrada (no ahora).
+- El builder deja un comando para restaurar y lo prueba una vez.
+
 ## 9. Casa inteligente (fases posteriores, resumen)
 
 Detalle completo en la plática previa de Alex (pegada en la sesión 2026-10-28).
