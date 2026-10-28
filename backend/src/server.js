@@ -51,6 +51,7 @@ export function createServer({ db, dataDir, readReceipt, handleChat }) {
       const r = or404(pagos.addPayment(db, u.id, +id, period, { cents, file, read_cents: cents }));
       return cents == null ? { needs_amount: true, receipt_id: r.receipt_id } : { ...r, read_cents: cents };
     }],
+    ['GET', /^\/api\/payments\/(\d+)\/receipts$/, (u, req, [id]) => or404(pagos.listReceipts(db, u.id, +id))],
     ['POST', /^\/api\/receipts\/(\d+)\/amount$/, async (u, req, [rid]) => {
       const r = or404(pagos.completeReceipt(db, u.id, +rid, (await json(req)).cents));
       if (r === 'ya') throw new HttpError(409, 'ese comprobante ya tiene monto');

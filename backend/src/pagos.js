@@ -143,3 +143,10 @@ export function completeReceipt(db, uid, receiptId, cents) {
   const s = getPeriod(db, r.payment_id, r.period);
   return { period: s, remaining_cents: remaining(p, s) };
 }
+
+export function listReceipts(db, uid, paymentId) {
+  if (!getVisible(db, uid, paymentId)) return null;
+  return db.prepare(`SELECT r.id, s.period, r.cents, r.read_cents, r.created_at, u.name AS user
+    FROM receipts r JOIN periods s ON s.id = r.period_id JOIN users u ON u.id = r.user_id
+    WHERE s.payment_id = ? ORDER BY r.created_at DESC`).all(paymentId);
+}

@@ -84,3 +84,14 @@ test('reminders y chat responden', async () => {
   assert.ok(Array.isArray((await call('GET', '/api/reminders', null, tere)).body));
   assert.equal((await call('POST', '/api/chat', { text: 'hola' }, tere)).body.reply, 'Tere:hola');
 });
+
+test('historial de comprobantes del pago, solo visible al dueño', async () => {
+  const p = (await call('POST', '/api/payments', { name: 'Hist', shared: false, pay_day: 28 }, alex)).body;
+  await call('POST', `/api/payments/${p.id}/periods/${mes()}/receipt`, null, alex, jpg);
+  const h = await call('GET', `/api/payments/${p.id}/receipts`, null, alex);
+  assert.equal(h.body.length, 1);
+  assert.equal(h.body[0].period, mes());
+  assert.equal(h.body[0].cents, 450000);
+  assert.equal(h.body[0].user, 'Alex');
+  assert.equal((await call('GET', `/api/payments/${p.id}/receipts`, null, tere)).status, 404);
+});
