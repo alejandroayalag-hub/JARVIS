@@ -122,3 +122,24 @@ export function summary(db, uid, month) {
   }
   return { month, paid_cents: paid, pending };
 }
+
+function getVisibleReceipt(db, uid, receiptId) {
+  return db.prepare(`SELECT r.*, s.payment_id, s.period FROM receipts r
+    JOIN periods s ON s.id = r.period_id JOIN payments p ON p.id = s.payment_id
+    WHERE r.id = :rid AND p.active = 1 AND ${visibleWhere('p')}`).get({ rid: receiptId, uid }) ?? null;
+}
+
+export const receiptFile = (db, uid, receiptId) => getVisibleReceipt(db, uid, receiptId)?.file ?? null;
+
+// Completa a mano un comprobante que no se pudo leer. 'ya' si ya tenía monto.
+export function completeReceipt(db, uid, receiptId, cents) {
+  const r = getVisibleReceipt(db, uid, receiptId);
+  if (!r) return null;
+  if (r.cents != null) return 'ya';
+  if (!(Number.isInteger(cents) && cents > 0)) throw new Error('monto inválido');
+  db.prepare('UPDATE receipts SET cents = ? WHERE id = ?').run(cents, receiptId);
+  db.prepare('UPDATE periods SET paid_cents = paid_cents + ? WHERE id = ?').run(cents, r.period_id);
+  const p = getVisible(db, uid, r.payment_id);
+  const s = getPeriod(db, r.payment_id, r.period);
+  return { period: s, remaining_cents: remaining(p, s) };
+}
