@@ -1,0 +1,9 @@
+{
+  "name": "jarvis-backend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "TZ=America/Mexico_City node --test --no-warnings=ExperimentalWarning",
+    "start": "node src/server.js"
+  }
+}
