@@ -92,3 +92,15 @@ export function createServer({ db, dataDir, readReceipt, handleChat }) {
     }
   });
 }
+
+// Arranque real: `node src/server.js` (en tests solo se importa createServer).
+if (process.argv[1]?.endsWith('server.js')) {
+  const { openDb } = await import('./db.js');
+  const { readReceipt } = await import('./comprobante.js');
+  const { handleChat } = await import('./chat.js');
+  const dataDir = process.env.JARVIS_DATA ?? './data';
+  mkdirSync(dataDir, { recursive: true });
+  const port = Number(process.env.PORT ?? 3019);
+  createServer({ db: openDb(join(dataDir, 'jarvis.db')), dataDir, readReceipt, handleChat })
+    .listen(port, '0.0.0.0', () => console.log(`jarvis-api en :${port}`));
+}
